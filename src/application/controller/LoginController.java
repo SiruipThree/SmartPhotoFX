@@ -57,6 +57,12 @@ public class LoginController {
                 controller.setUser(user);
                 stage.setTitle("Photo Album - " + username);
                 stage.setScene(scene);
+                final User currentUser = user;
+                stage.setOnCloseRequest(unused -> {
+                    if (currentUser != null) {
+                        DataStore.saveUser(currentUser);
+                    }
+                });
             }
         } catch(IOException e) {
             e.printStackTrace();

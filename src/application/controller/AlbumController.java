@@ -8,16 +8,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,6 +104,11 @@ public class AlbumController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("image_file", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
         File file = fileChooser.showOpenDialog(photoListView.getScene().getWindow());
         if(file != null) {
+            // check if the file is already in the album
+            if (album.getPhotoIds().stream().anyMatch(id -> user.getPhoto(id).getFilePath().equals(file.getAbsolutePath()))) {
+                new Alert(Alert.AlertType.ERROR, "This photo is already in the album.").showAndWait();
+                return;
+            }
             Photo photo = new Photo(user.allocPhotoId(), file.getAbsolutePath());
             TextInputDialog captionDialog = new TextInputDialog();
             captionDialog.setTitle("Adding photo");
@@ -158,6 +169,32 @@ public class AlbumController {
             DataStore.saveUser(user);
             refreshPhotoList();
         });
+    }
+
+    @FXML
+    public void handleOpenPhoto(ActionEvent event) {
+        Photo selected = photoListView.getSelectionModel().getSelectedItem();
+        if(selected == null){
+            new Alert(Alert.AlertType.ERROR, "No photos selected!").showAndWait();
+            return;
+        }
+        // Show a photo dialog
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/photodialog.fxml"));
+            Scene scene = new Scene(loader.load());
+            PhotoDialogController controller = loader.getController();
+            controller.setupInfo(user, album, selected, photoListView.getSelectionModel().getSelectedIndex());
+            Stage stage = new Stage();
+            stage.setTitle(selected.getCaption());
+            stage.setScene(scene);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(photoListView.getScene().getWindow());
+            stage.showAndWait();
+            refreshPhotoList();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
