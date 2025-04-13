@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -31,13 +32,13 @@ public class MainController {
     private void initialize() {
         albumListView.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             if(newV != null) {
-                albumDetailsLabel.setText(newV.getDetails());
+                albumDetailsLabel.setText(newV.getDetails(user));
             }
         });
     }
     
     private void refreshAlbumList(){
-        ObservableList<Album> albums = FXCollections.observableArrayList(user.getAlbums());
+        ObservableList<Album> albums = FXCollections.observableArrayList(user.getAlbums().values());
         albumListView.setItems(albums);
     }
     
@@ -48,16 +49,16 @@ public class MainController {
         dialog.setHeaderText("Please enter the album name:");
         dialog.showAndWait().ifPresent(name -> {
             if(name.trim().isEmpty()){
-                new Alert(Alert.AlertType.ERROR, "Filename can't be empty").showAndWait();
+                new Alert(Alert.AlertType.ERROR, "Filename can't be empty.").showAndWait();
                 return;
             }
-            if(user.hasAlbum(name)){
-                new Alert(Alert.AlertType.ERROR, "This Album has been existed").showAndWait();
+            boolean hasAlbum = user.getAlbums().values().stream().anyMatch(album -> album.getName().equals(name));
+            if(hasAlbum){
+                new Alert(Alert.AlertType.ERROR, "Album with this name already exists.").showAndWait();
                 return;
             }
-            Album album = new Album(name);
-            album.setOwner(user);
-            user.getAlbums().add(album);
+            Album album = new Album(user.allocAlbumId(), name);
+            user.getAlbums().put(album.getId(), album);
             DataStore.saveUser(user);
             refreshAlbumList();
         });
@@ -70,7 +71,7 @@ public class MainController {
             new Alert(Alert.AlertType.ERROR, "No albums selected.").showAndWait();
             return;
         }
-        user.getAlbums().remove(selected);
+        user.getAlbums().remove(selected.getId());
         DataStore.saveUser(user);
         refreshAlbumList();
     }
@@ -86,11 +87,13 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/album.fxml"));
             Scene scene = new Scene(loader.load());
             AlbumController controller = loader.getController();
-            controller.setAlbum(selected);
+            controller.setUserAndAlbum(user, selected);
             Stage stage = new Stage();
             stage.setTitle("Album: " + selected.getName());
             stage.setScene(scene);
-            stage.show();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(albumListView.getScene().getWindow());
+            stage.showAndWait();
         } catch(IOException e) {
             e.printStackTrace();
         }

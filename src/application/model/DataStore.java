@@ -14,13 +14,17 @@ public class DataStore {
             if(!dir.exists()){
                 dir.mkdirs();
             }
-            FileOutputStream fos = new FileOutputStream(DATA_DIR + "/" + user.getUsername() + ".ser");
+            FileOutputStream fos = new FileOutputStream(DATA_DIR + "/" + user.getUsername() + ".user.tmp");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            for(Album album: user.getAlbums()){
-                album.setOwner(user);
-            }
             oos.writeObject(user);
             oos.close();
+            // rename tmp file to final file
+            File tmpFile = new File(DATA_DIR + "/" + user.getUsername() + ".user.tmp");
+            File finalFile = new File(DATA_DIR + "/" + user.getUsername() + ".user");
+            if(finalFile.exists()){
+                finalFile.delete();
+            }
+            tmpFile.renameTo(finalFile);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -28,19 +32,15 @@ public class DataStore {
     
     public static User loadUser(String username) {
         try {
-            File file = new File(DATA_DIR + "/" + username + ".ser");
+            File file = new File(DATA_DIR + "/" + username + ".user");
             if(file.exists()){
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 User user = (User) ois.readObject();
                 ois.close();
-                for(Album album: user.getAlbums()){
-                    album.setOwner(user);
-                }
                 return user;
             }
         } catch(IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -50,14 +50,14 @@ public class DataStore {
     }
     
     public static void deleteUser(String username) {
-        File file = new File(DATA_DIR + "/" + username + ".ser");
+        File file = new File(DATA_DIR + "/" + username + ".user");
         if(file.exists()){
             file.delete();
         }
     }
     
     public static boolean userExists(String username) {
-        File file = new File(DATA_DIR + "/" + username + ".ser");
+        File file = new File(DATA_DIR + "/" + username + ".user");
         return file.exists();
     }
     
@@ -68,8 +68,8 @@ public class DataStore {
             File[] files = dir.listFiles();
             if(files != null){
                 for(File file: files){
-                    if(file.getName().endsWith(".ser")){
-                        String name = file.getName().replace(".ser", "");
+                    if(file.getName().endsWith(".user")){
+                        String name = file.getName().replace(".user", "");
                         users.add(name);
                     }
                 }

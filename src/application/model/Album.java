@@ -1,18 +1,24 @@
 package application.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Album implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private long id;
     private String name;
-    private List<Photo> photos;
-    private transient User owner;
+    private ArrayList<Long> photoIds;
     
-    public Album(String name) {
+    public Album(long id, String name) {
+        this.id = id;
         this.name = name;
-        this.photos = new ArrayList<>();
+        this.photoIds = new ArrayList<>();
+    }
+
+    public long getId() {
+        return id;
     }
     
     public String getName() {
@@ -23,23 +29,34 @@ public class Album implements Serializable {
         this.name = name;
     }
     
-    public List<Photo> getPhotos(){
-        return photos;
+    public List<Long> getPhotoIds(){
+        return photoIds;
     }
     
-    public String getDetails(){
-        String details = "Album" + name + "\nNumberOfPhoto: " + photos.size();
+    public String getDetails(User user){
+        String details = "Album" + name + "\nNumberOfPhotos: " + photoIds.size();
+        if (photoIds.size() > 0){
+            // Date range
+            long startDate = Long.MAX_VALUE;
+            long endDate = Long.MIN_VALUE;
+            for (Long id : photoIds) {
+                Photo photo = user.getPhoto(id);
+                long date = photo.getPhotoDate().toEpochSecond(ZoneOffset.UTC);
+                if (date < startDate) {
+                    startDate = date;
+                }
+                if (date > endDate) {
+                    endDate = date;
+                }
+            }
+            // Format date range
+            String startDateStr = LocalDateTime.ofEpochSecond(startDate, 0, ZoneOffset.UTC).toString();
+            String endDateStr = LocalDateTime.ofEpochSecond(endDate, 0, ZoneOffset.UTC).toString();
+            details += "\nDate Range: " + startDateStr + " - " + endDateStr;
+        }
         return details;
     }
-    
-    public User getOwner(){
-        return owner;
-    }
-    
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-    
+        
     @Override
     public String toString() {
         return name;

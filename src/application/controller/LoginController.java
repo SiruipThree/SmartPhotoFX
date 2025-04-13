@@ -30,13 +30,15 @@ public class LoginController {
                 user = new User(username);
             } else if(username.equals("stock")){
                 user = DataStore.loadStockUser();
-                if(user == null){
+                if (user == null) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Stock user not found!");
                     alert.showAndWait();
                     return;
                 }
             } else {
-                user = new User(username);
+                Alert alert = new Alert(Alert.AlertType.ERROR, "User not found!");
+                alert.showAndWait();
+                return;
             }
             DataStore.saveUser(user);
         }

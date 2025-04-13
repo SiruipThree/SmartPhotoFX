@@ -1,12 +1,17 @@
 package application.controller;
 
+import java.io.IOException;
+
 import application.model.DataStore;
 import application.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 public class AdminController {
     @FXML private ListView<String> userListView;
@@ -51,5 +56,18 @@ public class AdminController {
         }
         DataStore.deleteUser(selected);
         loadUsers();
+    }
+
+    @FXML
+    public void handleLogout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/login.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) userListView.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Photo Album - Login");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
