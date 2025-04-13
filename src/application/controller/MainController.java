@@ -94,6 +94,7 @@ public class MainController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(albumListView.getScene().getWindow());
             stage.showAndWait();
+            refreshAlbumList();
         } catch(IOException e) {
             e.printStackTrace();
         }

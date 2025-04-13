@@ -18,12 +18,13 @@
         <HBox spacing="10" alignment="CENTER">
             <Button text="Add Photo" onAction="#handleAddPhoto"/>
             <Button text="Delete Photo" onAction="#handleDeletePhoto"/>
+            <Button text="Rename" onAction="#handleRename"/>
             <Button text="Back" onAction="#handleBack"/>
         </HBox>
     </bottom>
     <right>
         <VBox spacing="10" style="-fx-padding: 0 5 0 5;">
-            <Label wrapText="true" fx:id="photoDetailsLabel" text="Photo Details" maxWidth="200"/>
+            <Label wrapText="true" fx:id="photoDetailsLabel" text="Photo Details" maxWidth="160"/>
         </VBox>
     </right>
 </BorderPane>

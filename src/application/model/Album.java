@@ -34,7 +34,7 @@ public class Album implements Serializable {
     }
     
     public String getDetails(User user){
-        String details = "Album" + name + "\nNumberOfPhotos: " + photoIds.size();
+        String details = "Album: " + name + "\nSize: " + photoIds.size();
         if (photoIds.size() > 0){
             // Date range
             long startDate = Long.MAX_VALUE;
@@ -52,7 +52,8 @@ public class Album implements Serializable {
             // Format date range
             String startDateStr = LocalDateTime.ofEpochSecond(startDate, 0, ZoneOffset.UTC).toString();
             String endDateStr = LocalDateTime.ofEpochSecond(endDate, 0, ZoneOffset.UTC).toString();
-            details += "\nDate Range: " + startDateStr + " - " + endDateStr;
+            details += "\nEarliest Photo: " + startDateStr;
+            details += "\nLatest Photo: " + endDateStr;
         }
         return details;
     }

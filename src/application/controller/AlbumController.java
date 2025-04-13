@@ -102,8 +102,13 @@ public class AlbumController {
             TextInputDialog captionDialog = new TextInputDialog();
             captionDialog.setTitle("Adding photo");
             captionDialog.setHeaderText("Please input the caption");
+            // set default text to file name
+            String fileName = file.getName();
+            String defaultCaption = fileName.substring(0, fileName.lastIndexOf('.'));
+            captionDialog.setContentText("Caption:");
+            captionDialog.getEditor().setText(defaultCaption);
             Optional<String> caption = captionDialog.showAndWait();
-            caption.ifPresentOrElse(cap -> photo.setCaption(cap), () -> photo.setCaption("Unnamed"));
+            caption.ifPresentOrElse(cap -> photo.setCaption(cap.isBlank() ? "Unnamed" : cap), () -> photo.setCaption("Unnamed"));
             user.getPhotos().put(photo.getId(), photo);
             album.getPhotoIds().add(photo.getId());
             DataStore.saveUser(user);
@@ -130,6 +135,29 @@ public class AlbumController {
     @FXML
     public void handleBack(ActionEvent event) {
         photoListView.getScene().getWindow().hide();
+    }
+
+    @FXML
+    public void handleRename(ActionEvent event) {
+        Photo selected = photoListView.getSelectionModel().getSelectedItem();
+        if(selected == null){
+            new Alert(Alert.AlertType.ERROR, "No photos selected!").showAndWait();
+            return;
+        }
+        TextInputDialog dialog = new TextInputDialog(selected.getCaption());
+        dialog.setTitle("Rename Photo");
+        dialog.setHeaderText("Please enter the new caption:");
+        dialog.getEditor().setText(selected.getCaption());
+        dialog.setContentText("New Caption:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newCaption -> {
+            if (newCaption.isBlank()) {
+                return;
+            }
+            selected.setCaption(newCaption);
+            DataStore.saveUser(user);
+            refreshPhotoList();
+        });
     }
 }
 

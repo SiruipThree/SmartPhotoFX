@@ -24,7 +24,7 @@
     </bottom>
     <right>
         <VBox spacing="10" style="-fx-padding: 0 5 0 5;">
-            <Label fx:id="albumDetailsLabel" text="Album Details" wrapText="true"/>
+            <Label fx:id="albumDetailsLabel" text="Album Details" wrapText="true" maxWidth="160"/>
         </VBox>
     </right>
 </BorderPane>
