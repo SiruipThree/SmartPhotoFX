@@ -6,7 +6,7 @@
         "name": "Launch Photos",
         "request": "launch",
         "mainClass": "application.Photos",
-        "vmArgs": "-Djava.library.path=\"D:\\Repositories\\Photos30\\javafx-sdk-21.0.6\\bin\" --module-path \"D:\\Repositories\\Photos30\\lib\" --add-modules javafx.controls,javafx.fxml",
+        "vmArgs": "-Djava.library.path=\"javafx-sdk-21.0.6\\bin\" --module-path \"javafx-sdk-21.0.6\\lib\" --add-modules javafx.controls,javafx.fxml",
         "classPaths": [
           "bin",
           "lib\\*"
