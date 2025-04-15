@@ -132,6 +132,7 @@ Click “Search Photos” from the main screen.
 - **Compile java code from src to out** - javac --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -d out src/application/Photos.java src/application/controller/*.java src/application/model/*.java
 - **Run the code** - java --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -cp out application.Photos
 
+- We made changes and our history is in the "Three branch" the main is the final version that we are submitting to be graded.
 ---
 
 ## 📌 Assignment Features Checklist
