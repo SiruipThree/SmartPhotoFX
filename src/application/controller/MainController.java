@@ -22,14 +22,17 @@ public class MainController {
     private Label albumDetailsLabel;
     
     private User user;
-    
+
+    //Sets the current user and loads their albums into the list view
     public void setUser(User user){
         this.user = user;
         refreshAlbumList();
     }
     
+    //Initializes UI behavior when the scene is loaded
     @FXML
     private void initialize() {
+        //When an album is selected, display its details
         albumListView.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             if(newV != null) {
                 albumDetailsLabel.setText(newV.getDetails(user));
@@ -37,11 +40,13 @@ public class MainController {
         });
     }
     
+    //Refresh the ListView with all albums from the user
     private void refreshAlbumList(){
         ObservableList<Album> albums = FXCollections.observableArrayList(user.getAlbums().values());
         albumListView.setItems(albums);
     }
     
+    //Creates a new album for the user
     @FXML
     public void handleCreateAlbum(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog();
@@ -52,11 +57,14 @@ public class MainController {
                 new Alert(Alert.AlertType.ERROR, "Filename can't be empty.").showAndWait();
                 return;
             }
+
+            //Ensure album name is unique
             boolean hasAlbum = user.getAlbums().values().stream().anyMatch(album -> album.getName().equals(name));
             if(hasAlbum){
                 new Alert(Alert.AlertType.ERROR, "Album with this name already exists.").showAndWait();
                 return;
             }
+            //Create and store the new album
             Album album = new Album(user.allocAlbumId(), name);
             user.getAlbums().put(album.getId(), album);
             DataStore.saveUser(user);
@@ -64,6 +72,7 @@ public class MainController {
         });
     }
     
+    //Deletes the selected album
     @FXML
     public void handleDeleteAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();
@@ -76,6 +85,7 @@ public class MainController {
         refreshAlbumList();
     }
     
+    //Opens the selected album in a new window
     @FXML
     public void handleOpenAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();
@@ -100,6 +110,7 @@ public class MainController {
         }
     }
     
+    //Logs the user out and returns to login screen
     @FXML
     public void handleLogout(ActionEvent event) {
         DataStore.saveUser(user);
@@ -114,6 +125,7 @@ public class MainController {
         }
     }
 
+//Opens the photo search dialog
     @FXML
     public void handleSearch(ActionEvent event) {
         try {
@@ -133,6 +145,7 @@ public class MainController {
         }
     }
 
+    //Renames the selected album
     @FXML
     public void handleRenameAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();

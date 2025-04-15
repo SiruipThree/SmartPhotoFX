@@ -96,6 +96,7 @@ public class SearchDialogController {
                 container.getChildren().addAll(imageView, titleLabel);
             }
 
+            //used to update photo
             @Override
             protected void updateItem(Photo photo, boolean empty) {
                 super.updateItem(photo, empty);

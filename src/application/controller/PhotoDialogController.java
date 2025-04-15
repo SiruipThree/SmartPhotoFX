@@ -93,16 +93,15 @@ public class PhotoDialogController {
     
     @FXML
     private void handleDeleteTag(ActionEvent event){
-        // Check selection
+
         int selectedIndex = tagListView.getSelectionModel().getSelectedIndex();
         if (selectedIndex < 0) {
-            // No tag selected, show an error message
+            //No tag selected, show an error message
             new Alert(Alert.AlertType.ERROR, "No tag selected.").showAndWait();
             return;
         }
-        // Get the tag ID from the selected item
+        // Get the tag ID from the selected item and remove
         long tagId = (long) photo.getTags().keySet().toArray()[selectedIndex];
-        // Remove the tag from the photo
         photo.getTags().remove(tagId);
         // Refresh the tag list view
         refreshTagList();
@@ -173,6 +172,7 @@ public class PhotoDialogController {
         }
     }
     
+    //move photo to other album
     @FXML
     private void handleMoveToAlbum(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();
@@ -215,7 +215,7 @@ public class PhotoDialogController {
         });
     }    
     
-    
+    //copy photo to another album
     @FXML
     private void handleCopyToAlbum(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();

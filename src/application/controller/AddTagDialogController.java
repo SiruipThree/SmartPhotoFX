@@ -16,16 +16,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class AddTagDialogController {
-
     @FXML
     private ListView<String> tagListView;
-    
     @FXML
     private TextField tagNameField;
-    
     @FXML
     private CheckBox allowMultiValueCheckBox;
-    
     @FXML
     private TextField tagValueField;
 
@@ -34,7 +30,7 @@ public class AddTagDialogController {
 
     private ArrayList<Tag> tagList = new ArrayList<>();;
     
-    // Observable list for storing tag strings
+    //this list is using for storing tag strings
     private ObservableList<String> tags = FXCollections.observableArrayList();
     
     @FXML

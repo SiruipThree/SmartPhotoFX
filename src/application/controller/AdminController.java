@@ -14,22 +14,29 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class AdminController {
+
+    //UI Components
     @FXML private ListView<String> userListView;
     @FXML private TextField newUserField;
 
+    //Called when using Admin
     @FXML
     private void initialize(){
         loadUsers();
     }
     
+    //Loads and displays all users for admin
     private void loadUsers(){
         ObservableList<String> users = FXCollections.observableArrayList(DataStore.getUserList());
         userListView.setItems(users);
     }
     
+    //Creates user
     @FXML
     public void handleCreateUser(ActionEvent event) {
         String newUser = newUserField.getText().trim();
+
+        //Validate input
         if(newUser.isEmpty()){
             new Alert(Alert.AlertType.ERROR, "Username cannot be empty!").showAndWait();
             return;
@@ -38,11 +45,16 @@ public class AdminController {
             new Alert(Alert.AlertType.ERROR, "The user already exists.").showAndWait();
             return;
         }
+
+        //create and save user
         User user = new User(newUser);
         DataStore.saveUser(user);
+
+        //refresh user list
         loadUsers();
     }
     
+    //delete user
     @FXML
     public void handleDeleteUser(ActionEvent event) {
         String selected = userListView.getSelectionModel().getSelectedItem();
@@ -58,6 +70,7 @@ public class AdminController {
         loadUsers();
     }
 
+    //logout
     @FXML
     public void handleLogout(ActionEvent event) {
         try {

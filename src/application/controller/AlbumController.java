@@ -30,28 +30,34 @@ import java.util.List;
 import java.util.Optional;
 
 public class AlbumController {
+
+    //UI Elements
     @FXML
     private ListView<Photo> photoListView;
-    
     @FXML
     private Label photoDetailsLabel;
     
     private Album album;
     private User user;
     
+    //Sets user and album and loads photo list
     public void setUserAndAlbum(User user, Album album){
         this.user = user;
         this.album = album;
         refreshPhotoList();
     }
     
+    //Sets up ListView rendering and selection listener
     @FXML
     private void initialize(){
+        //Update label when a new photo is selected
         photoListView.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             if(newV != null) {
                 photoDetailsLabel.setText(newV.getDetails());
             }
         });
+
+        //Customize ListView cells to show photo thumbnails and captions
         photoListView.setCellFactory(listView -> new ListCell<Photo>() {
             private final ImageView imageView = new ImageView();
             private final Label titleLabel = new Label();
@@ -72,6 +78,7 @@ public class AlbumController {
                 container.getChildren().addAll(imageView, titleLabel);
             }
 
+            //Update content of each cell
             @Override
             protected void updateItem(Photo photo, boolean empty) {
                 super.updateItem(photo, empty);
@@ -93,12 +100,14 @@ public class AlbumController {
         });
     }
     
+    //Refresh the ListView with photos from the album
     private void refreshPhotoList(){
         List<Photo> photoList = album.getPhotoIds().stream().map(id -> user.getPhoto(id)).toList();
         ObservableList<Photo> photos = FXCollections.observableArrayList(photoList);
         photoListView.setItems(photos);
     }
     
+    //Handles adding a new photo to the album
     @FXML
     public void handleAddPhoto(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -133,6 +142,7 @@ public class AlbumController {
         }
     }
     
+    //Handles deleting a photo from the album
     @FXML
     public void handleDeletePhoto(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
@@ -146,11 +156,13 @@ public class AlbumController {
         refreshPhotoList();
     }
     
+    //Handles the "Back" button to close the current window
     @FXML
     public void handleBack(ActionEvent event) {
         photoListView.getScene().getWindow().hide();
     }
 
+    //Handles renaming a photo's caption
     @FXML
     public void handleRename(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
@@ -174,6 +186,7 @@ public class AlbumController {
         });
     }
 
+    //Opens the selected photo in a dialog view with caption and navigation
     @FXML
     public void handleOpenPhoto(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
@@ -194,6 +207,7 @@ public class AlbumController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(photoListView.getScene().getWindow());
             stage.showAndWait();
+            //Refresh in case any changes were made in the dialog
             refreshPhotoList();
         }
         catch (IOException e) {

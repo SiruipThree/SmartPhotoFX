@@ -29,6 +29,7 @@ public class DataStore {
         }
     }
     
+    //loads user
     public static User loadUser(String username) {
         try {
             File file = new File(DATA_DIR + "/" + username + ".user");
