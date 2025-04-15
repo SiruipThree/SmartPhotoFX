@@ -62,4 +62,19 @@ public class Album implements Serializable {
     public String toString() {
         return name;
     }
+
+    public boolean containsPhoto(long photoId) {
+        return photoIds.contains(photoId);
+    }
+    
+    public void addPhoto(long photoId) {
+        if (!photoIds.contains(photoId)) {
+            photoIds.add(photoId);
+        }
+    }
+    
+    public void removePhoto(long photoId) {
+        photoIds.remove(photoId);
+    }
+    
 }

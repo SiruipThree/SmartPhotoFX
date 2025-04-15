@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -19,6 +18,8 @@ import javafx.scene.image.Image;
 import javafx.geometry.Pos;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import javafx.scene.control.ListView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -191,92 +192,103 @@ public class SearchDialogController {
     }
 
     @FXML
-    public void handleSearch(ActionEvent event) {
-        // Check date range selection, either both or none should be selected.
-        if (enableDateCheckBox.isSelected() && (startDatePicker.getValue() == null || endDatePicker.getValue() == null)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Please select both start and end dates.");
-            alert.showAndWait();
+public void handleSearch(ActionEvent event) {
+    resultListView.getItems().clear();
+
+    // --- Check if searching by date ---
+    boolean usingDate = enableDateCheckBox.isSelected();
+    LocalDate startDate = startDatePicker.getValue();
+    LocalDate endDate = endDatePicker.getValue();
+
+    if (usingDate) {
+        if (startDate == null || endDate == null) {
+            new Alert(Alert.AlertType.ERROR, "Please select both start and end dates.").showAndWait();
             return;
         }
-        // Store the selected date range.
-        LocalDate startDate = enableDateCheckBox.isSelected() ? startDatePicker.getValue() : null;
-        LocalDate endDate = enableDateCheckBox.isSelected() ? endDatePicker.getValue() : null;
-        // Validate date range.
-        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Start date cannot be after end date.");
-            alert.showAndWait();
+        if (startDate.isAfter(endDate)) {
+            new Alert(Alert.AlertType.ERROR, "Start date cannot be after end date.").showAndWait();
             return;
-        }
-        // Check tag combo box if enabled
-        if (enableTag1CheckBox.isSelected() && (tagComboBox1.getValue() == null || tagValueField1.getText().trim().isEmpty())) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Please select a tag and enter a value for the first tag.");
-            alert.showAndWait();
-            return;
-        }
-        if (enableTag2CheckBox.isSelected() && (tagComboBox2.getValue() == null || tagValueField2.getText().trim().isEmpty())) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Please select a tag and enter a value for the second tag.");
-            alert.showAndWait();
-            return;
-        }
-        // Store the selected tag indexes and values.
-        String tag1 = enableTag1CheckBox.isSelected() ? tagComboBox1.getValue() : null;
-        String tagValue1 = enableTag1CheckBox.isSelected() ? tagValueField1.getText().trim() : null;
-        String tag2 = enableTag2CheckBox.isSelected() ? tagComboBox2.getValue() : null;
-        String tagValue2 = enableTag2CheckBox.isSelected() ? tagValueField2.getText().trim() : null;
-        long tag1Index = -1;
-        long tag2Index = -1;
-        if (tag1 != null) {
-            for (int i = 0; i < tagList.size(); i++) {
-                if (tagList.get(i).getName().equals(tag1)) {
-                    tag1Index = i;
-                    break;
-                }
-            }
-        }
-        if (tag2 != null) {
-            for (int i = 0; i < tagList.size(); i++) {
-                if (tagList.get(i).getName().equals(tag2)) {
-                    tag2Index = i;
-                    break;
-                }
-            }
-        }
-        boolean isAnd = relationComboBox.getValue().equals("AND");
-        // Perform the search based on the selected criteria.
-        resultListView.getItems().clear();
-        for (Photo photo : user.getPhotos().values()) {
-            boolean matchesDate = true;
-            boolean matchesTag1 = true;
-            boolean matchesTag2 = true;
-            // Check date range if enabled.
-            if (startDate != null && endDate != null) {
-                LocalDate photoDate = photo.getPhotoDate().toLocalDate();
-                matchesDate = !photoDate.isBefore(startDate) && !photoDate.isAfter(endDate);
-            }
-            // Check first tag condition if enabled.
-            if (tag1Index != -1) {
-                Tag tag = tagList.get((int) tag1Index);
-                matchesTag1 = matchTagSingleCriteria(photo, tag, tagValue1);
-            }
-            // Check second tag condition if enabled.
-            if (tag2Index != -1) {
-                Tag tag = tagList.get((int) tag2Index);
-                matchesTag2 = matchTagSingleCriteria(photo, tag, tagValue2);
-            }
-            // Merge tag results based on the selected relation if both conditions are enabled.
-            boolean matchesTags = true;
-            if (enableTag1CheckBox.isSelected() && enableTag2CheckBox.isSelected()) {
-                matchesTags = isAnd ? (matchesTag1 && matchesTag2) : (matchesTag1 || matchesTag2);
-            } else if (enableTag1CheckBox.isSelected()) {
-                matchesTags = matchesTag1;
-            } else if (enableTag2CheckBox.isSelected()) {
-                matchesTags = matchesTag2;
-            }
-            
-            boolean matchesAll = matchesDate && matchesTags;
-            if (matchesAll) {
-                resultListView.getItems().add(photo);
-            }
         }
     }
+
+    // --- Check if searching by tag(s) ---
+    boolean usingTag1 = enableTag1CheckBox.isSelected();
+    boolean usingTag2 = enableTag2CheckBox.isSelected();
+    boolean usingTags = usingTag1 || usingTag2;
+
+    if (!usingDate && !usingTags) {
+        new Alert(Alert.AlertType.ERROR, "Please select at least one search option.").showAndWait();
+        return;
+    }
+
+    if (usingDate && usingTags) {
+        new Alert(Alert.AlertType.ERROR, "Cannot search by both date and tag(s) together.").showAndWait();
+        return;
+    }
+
+    String tagName1 = tagComboBox1.getValue();
+    String tagValue1 = tagValueField1.getText().trim();
+    String tagName2 = tagComboBox2.getValue();
+    String tagValue2 = tagValueField2.getText().trim();
+
+    Tag tag1 = null, tag2 = null;
+    if (usingTag1) {
+        if (tagName1 == null || tagValue1.isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "Please provide tag name and value for the first tag.").showAndWait();
+            return;
+        }
+        tag1 = tagList.stream().filter(t -> t.getName().equals(tagName1)).findFirst().orElse(null);
+    }
+
+    if (usingTag2) {
+        if (tagName2 == null || tagValue2.isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "Please provide tag name and value for the second tag.").showAndWait();
+            return;
+        }
+        tag2 = tagList.stream().filter(t -> t.getName().equals(tagName2)).findFirst().orElse(null);
+    }
+
+    boolean isAnd = relationComboBox.getValue().equals("AND");
+
+    // --- Start filtering photos ---
+    for (Photo photo : user.getPhotos().values()) {
+        // Date filter
+
+        // System.out.println("Photo: " + photo.getFilePath() + " Date: " + photo.getPhotoDate().toLocalDate());
+
+        if (usingDate) {
+            LocalDate photoDate = photo.getPhotoDate().toLocalDate();
+            if (photoDate.isBefore(startDate) || photoDate.isAfter(endDate)) {
+                continue;
+            }
+            resultListView.getItems().add(photo);
+            continue;
+        }
+
+        // Tag filter
+        boolean matchesTag1 = false;
+        boolean matchesTag2 = false;
+
+        if (tag1 != null) matchesTag1 = matchTagSingleCriteria(photo, tag1, tagValue1);
+        if (tag2 != null) matchesTag2 = matchTagSingleCriteria(photo, tag2, tagValue2);
+
+        boolean matches = false;
+        if (usingTag1 && usingTag2) {
+            matches = isAnd ? (matchesTag1 && matchesTag2) : (matchesTag1 || matchesTag2);
+        } else if (usingTag1) {
+            matches = matchesTag1;
+        } else if (usingTag2) {
+            matches = matchesTag2;
+        }
+
+        if (matches) {
+            resultListView.getItems().add(photo);
+        }
+    }
+
+    if (resultListView.getItems().isEmpty()) {
+        new Alert(Alert.AlertType.INFORMATION, "No photos match the given criteria.").showAndWait();
+    }
+}
+
 }

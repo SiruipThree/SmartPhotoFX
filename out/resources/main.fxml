@@ -16,9 +16,14 @@
     </center>
     <bottom>
         <HBox spacing="10" alignment="CENTER">
-            <Button text="Create Album" onAction="#handleCreateAlbum"/>
-            <Button text="Delete Album" onAction="#handleDeleteAlbum"/>
+            <padding>
+                <Insets top="10" right="0" bottom="0" left="0"/>
+            </padding>
             <Button text="Open Album" onAction="#handleOpenAlbum"/>
+            <Button text="Search" onAction="#handleSearch"/>
+            <Button text="Create Album" onAction="#handleCreateAlbum"/>
+            <Button text="Rename Album" onAction="#handleRenameAlbum"/>
+            <Button text="Delete Album" onAction="#handleDeleteAlbum"/>
             <Button text="Logout" onAction="#handleLogout"/>
         </HBox>
     </bottom>

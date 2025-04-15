@@ -19,6 +19,8 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.ListView;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,7 +111,8 @@ public class AlbumController {
                 new Alert(Alert.AlertType.ERROR, "This photo is already in the album.").showAndWait();
                 return;
             }
-            Photo photo = new Photo(user.allocPhotoId(), file.getAbsolutePath());
+            Photo photo = user.importPhoto(file.getAbsolutePath());
+
             TextInputDialog captionDialog = new TextInputDialog();
             captionDialog.setTitle("Adding photo");
             captionDialog.setHeaderText("Please input the caption");
@@ -120,7 +123,7 @@ public class AlbumController {
             captionDialog.getEditor().setText(defaultCaption);
             Optional<String> caption = captionDialog.showAndWait();
             caption.ifPresentOrElse(cap -> photo.setCaption(cap.isBlank() ? "Unnamed" : cap), () -> photo.setCaption("Unnamed"));
-            user.getPhotos().put(photo.getId(), photo);
+
             album.getPhotoIds().add(photo.getId());
             DataStore.saveUser(user);
             refreshPhotoList();
@@ -174,6 +177,7 @@ public class AlbumController {
     @FXML
     public void handleOpenPhoto(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
+        int photoIndex = photoListView.getSelectionModel().getSelectedIndex();
         if(selected == null){
             new Alert(Alert.AlertType.ERROR, "No photos selected!").showAndWait();
             return;
@@ -185,7 +189,7 @@ public class AlbumController {
             PhotoDialogController controller = loader.getController();
             controller.setupInfo(user, album, selected, photoListView.getSelectionModel().getSelectedIndex());
             Stage stage = new Stage();
-            stage.setTitle(selected.getCaption());
+            stage.setTitle(selected.getCaption() + " (" + (photoIndex + 1) + "/" + album.getPhotoIds().size() + ")");
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(photoListView.getScene().getWindow());

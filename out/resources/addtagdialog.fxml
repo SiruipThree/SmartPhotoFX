@@ -21,7 +21,10 @@
     <!-- Tag List Area -->
     <TitledPane text="Current Tags" expanded="true">
         <content>
-            <ListView fx:id="tagListView" prefHeight="200" prefWidth="300"/>
+            <VBox spacing="10">
+                <ListView fx:id="tagListView" prefHeight="200" prefWidth="300"/>
+                <Button text="Delete Tag" onAction="#handleDeleteTag"/>
+            </VBox>
         </content>
     </TitledPane>
 

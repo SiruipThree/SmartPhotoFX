@@ -11,6 +11,7 @@ import java.util.HashMap;
     private HashMap<Long, Album> albumMap;
     private HashMap<Long, Tag> tagMap;
     private HashMap<Long, Photo> photoMap;
+    private HashMap<String, Long> filePathToPhotoId = new HashMap<>();
     
     public User(String username) {
         this.username = username;
@@ -20,6 +21,12 @@ import java.util.HashMap;
         this.nextAlbumId = 1;
         this.nextTagId = 1;
         this.nextPhotoId = 1;
+
+        // Add some default tags.
+        Tag location = new Tag(allocTagId(), "location", false);
+        Tag person = new Tag(allocTagId(), "person", true);
+        tagMap.put(location.getId(), location);
+        tagMap.put(person.getId(), person);
     }
 
     public long allocAlbumId() {
@@ -66,4 +73,28 @@ import java.util.HashMap;
     public String toString(){
         return username;
     }
+
+    public Album getAlbumByName(String name) {
+        for (Album album : albumMap.values()) {
+            if (album.getName().equalsIgnoreCase(name)) {
+                return album;
+            }
+        }
+        return null;
+    }
+
+    public Photo importPhoto(String filePath) {
+        if (filePathToPhotoId.containsKey(filePath)) {
+            long existingId = filePathToPhotoId.get(filePath);
+            return photoMap.get(existingId);
+        }
+    
+        long newId = allocPhotoId();
+        Photo newPhoto = new Photo(newId, filePath);
+        photoMap.put(newId, newPhoto);
+        filePathToPhotoId.put(filePath, newId);
+        return newPhoto;
+    }
+    
+    
 }

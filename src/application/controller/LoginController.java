@@ -1,7 +1,9 @@
 package application.controller;
 
 import application.Photos;
+import application.model.Album;
 import application.model.DataStore;
+import application.model.Photo;
 import application.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,11 +12,43 @@ import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 
 public class LoginController {
     @FXML
     private TextField usernameField;
+
+    @FXML
+    private void initialize() {
+        // Create the stock user if not exists
+        User stockUser = DataStore.loadStockUser();
+        if(stockUser == null) {
+            stockUser = new User("stock");
+            Album stockAlbum = new Album(stockUser.allocAlbumId(), "stock");
+            // Find the image files under "./stock" directory and add them to the album.
+            String stockDir = "stock";
+            File stockDirectory = new File(stockDir);
+            if (!stockDirectory.exists()) {
+                return;
+            }
+            File[] stockFiles = stockDirectory.listFiles();
+            if (stockFiles != null) {
+                for (File file : stockFiles) {
+                    if (file.isFile()) {
+                        String relPath = stockDir + File.separator + file.getName();
+                        Photo photo = new Photo(stockUser.allocPhotoId(), relPath);
+                        stockUser.getPhotos().put(photo.getId(), photo);
+                        stockAlbum.getPhotoIds().add(photo.getId());
+                    }
+                }
+            }
+            stockUser.getAlbums().put(stockAlbum.getId(), stockAlbum);
+            // Save the stock user
+            DataStore.saveUser(stockUser);
+        }
+    }
     
     @FXML
     public void handleLogin(ActionEvent event) {

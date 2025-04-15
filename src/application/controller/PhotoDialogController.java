@@ -59,6 +59,11 @@ public class PhotoDialogController {
         String details = "Caption: " + photo.getCaption() + "\n" +
                         "Date: " + photo.getPhotoDate() + "\n";
         detailLabel.setText(details);
+        // update window caption
+        Stage stage = (Stage) stackPane.getScene().getWindow();
+        if (stage != null) {
+            stage.setTitle(photo.getCaption() + " (" + (photoIndex + 1) + "/" + album.getPhotoIds().size() + ")");
+        }
         refreshTagList();
     }
 
@@ -170,13 +175,74 @@ public class PhotoDialogController {
     
     @FXML
     private void handleMoveToAlbum(ActionEvent event){
-        // TODO: Implement move to album functionality
-        System.out.println("Move to album");
-    }
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Move Photo");
+        dialog.setHeaderText("Enter the name of the destination album:");
+        dialog.setContentText("Album Name:");
+        dialog.initOwner(stackPane.getScene().getWindow());
+    
+        dialog.showAndWait().ifPresent(albumName -> {
+            albumName = albumName.trim();
+            if (albumName.isEmpty()) return;
+    
+            Album destAlbum = user.getAlbumByName(albumName);
+            if (destAlbum == null) {
+                new Alert(Alert.AlertType.ERROR, "Album not found.").showAndWait();
+                return;
+            }
+    
+            if (destAlbum.containsPhoto(photo.getId())) {
+                new Alert(Alert.AlertType.INFORMATION, "This photo already exists in the selected album.").showAndWait();
+                return;
+            }
+    
+            destAlbum.addPhoto(photo.getId());
+            album.removePhoto(photo.getId());
+    
+            new Alert(Alert.AlertType.INFORMATION, "Photo moved to album: " + albumName).showAndWait();
+    
+            // update photo index and UI
+            if (album.getPhotoIds().isEmpty()) {
+                ((Stage) stackPane.getScene().getWindow()).close();
+            } else {
+                if (photoIndex >= album.getPhotoIds().size()) {
+                    photoIndex = album.getPhotoIds().size() - 1;
+                }
+                long newPhotoId = album.getPhotoIds().get(photoIndex);
+                Photo newPhoto = user.getPhotos().get(newPhotoId);
+                setupInfo(user, album, newPhoto, photoIndex);
+            }
+        });
+    }    
+    
     
     @FXML
     private void handleCopyToAlbum(ActionEvent event){
-        // TODO: Implement copy to album functionality
-        System.out.println("Copy to album");
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Copy Photo");
+        dialog.setHeaderText("Enter the name of the destination album:");
+        dialog.setContentText("Album Name:");
+        dialog.initOwner(stackPane.getScene().getWindow());
+    
+        dialog.showAndWait().ifPresent(albumName -> {
+            albumName = albumName.trim();
+            if (albumName.isEmpty()) return;
+    
+            Album destAlbum = user.getAlbumByName(albumName);
+            if (destAlbum == null) {
+                new Alert(Alert.AlertType.ERROR, "Album not found.").showAndWait();
+                return;
+            }
+    
+            if (destAlbum.containsPhoto(photo.getId())) {
+                new Alert(Alert.AlertType.INFORMATION, "This photo already exists in the selected album.").showAndWait();
+                return;
+            }
+    
+            destAlbum.addPhoto(photo.getId());
+            new Alert(Alert.AlertType.INFORMATION, "Photo copied to album: " + albumName).showAndWait();
+        });
     }
+    
+    
 }

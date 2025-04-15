@@ -46,7 +46,10 @@ public class AddTagDialogController {
     void setUserAndPhoto(User user, Photo photo) {
         this.user = user;
         this.photo = photo;
+        refreshTagList();
+    }
 
+    void refreshTagList() {
         // We only show the tags that this user has but this photo doesn't have
         tags.clear();
         tagList.clear();
@@ -87,6 +90,33 @@ public class AddTagDialogController {
         // Clear input fields and reset the checkbox
         tagNameField.clear();
         allowMultiValueCheckBox.setSelected(false);
+    }
+
+    @FXML
+    public void handleDeleteTag(ActionEvent event) {
+        // Get the selected tag from the ListView
+        int selectedIndex = tagListView.getSelectionModel().getSelectedIndex();
+        if (selectedIndex < 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "No tag selected.");
+            alert.showAndWait();
+            return;
+        }
+        
+        Tag selectedTag = tagList.get(selectedIndex);
+        
+        // Check if any other photo has this tag
+        for (Photo p : user.getPhotos().values()) {
+            if (p.getTags().containsKey(selectedTag.getId())) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "This tag is used by another photo. Cannot delete.");
+                alert.showAndWait();
+                return;
+            }
+        }
+        
+        // Remove the tag from the ListView and the tag list
+        tags.remove(selectedIndex);
+        tagList.remove(selectedIndex);
+        user.getTags().remove(selectedTag.getId());
     }
 
     @FXML

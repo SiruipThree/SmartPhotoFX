@@ -16,6 +16,9 @@
     </center>
     <bottom>
         <HBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="0" bottom="0" left="0"/>
+            </padding>
             <Button text="Open Photo" onAction="#handleOpenPhoto"/>
             <Button text="Add Photo" onAction="#handleAddPhoto"/>
             <Button text="Delete Photo" onAction="#handleDeletePhoto"/>
