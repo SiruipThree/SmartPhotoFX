@@ -29,6 +29,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for the album view. Handles photo display, editing, and album-specific actions like
+ * adding, removing, captioning, and opening photos. Also enables photo preview in a dialog window.
+ * 
+ * This controller is loaded when a user opens an album.
+ *
+ */
 public class AlbumController {
 
     //UI Elements
@@ -40,14 +47,18 @@ public class AlbumController {
     private Album album;
     private User user;
     
-    //Sets user and album and loads photo list
+    /**
+     * Sets the current user and album, then refreshes the photo list.
+     *
+     */
     public void setUserAndAlbum(User user, Album album){
         this.user = user;
         this.album = album;
         refreshPhotoList();
     }
-    
-    //Sets up ListView rendering and selection listener
+        /**
+     * Initializes the photo list view, including thumbnail rendering and selection listener.
+     */
     @FXML
     private void initialize(){
         //Update label when a new photo is selected
@@ -99,15 +110,19 @@ public class AlbumController {
             }
         });
     }
-    
-    //Refresh the ListView with photos from the album
+    /**
+     * Refreshes the ListView with all photos in the current album.
+     */
     private void refreshPhotoList(){
         List<Photo> photoList = album.getPhotoIds().stream().map(id -> user.getPhoto(id)).toList();
         ObservableList<Photo> photos = FXCollections.observableArrayList(photoList);
         photoListView.setItems(photos);
     }
     
-    //Handles adding a new photo to the album
+    /**
+     * Handles adding a new photo via file chooser and caption dialog.
+     *
+     */
     @FXML
     public void handleAddPhoto(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -141,8 +156,10 @@ public class AlbumController {
             new Alert(Alert.AlertType.INFORMATION, "No file selected!").showAndWait();
         }
     }
-    
-    //Handles deleting a photo from the album
+        /**
+     * Handles deleting the selected photo from the album.
+     *
+     */
     @FXML
     public void handleDeletePhoto(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
@@ -156,13 +173,19 @@ public class AlbumController {
         refreshPhotoList();
     }
     
-    //Handles the "Back" button to close the current window
+    /**
+     * Closes the album view and returns to the main screen.
+     *
+     */
     @FXML
     public void handleBack(ActionEvent event) {
         photoListView.getScene().getWindow().hide();
     }
 
-    //Handles renaming a photo's caption
+    /**
+     * Handles renaming the caption of the selected photo.
+     *
+     */
     @FXML
     public void handleRename(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();
@@ -186,7 +209,10 @@ public class AlbumController {
         });
     }
 
-    //Opens the selected photo in a dialog view with caption and navigation
+    /**
+     * Opens the selected photo in a separate dialog for detailed viewing and navigation.
+     *
+     */
     @FXML
     public void handleOpenPhoto(ActionEvent event) {
         Photo selected = photoListView.getSelectionModel().getSelectedItem();

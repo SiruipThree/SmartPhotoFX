@@ -15,36 +15,67 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the Add Tag dialog.
+ * 
+ * Allows users to:
+ * 
+ *     View tags available for the user but not yet added to the photo
+ *     Create a new tag type (with optional multi-value support)
+ *     Delete unused tags
+ *     dd one or more values to a tag and assign it to the photo
+ * 
+ * 
+ */
 public class AddTagDialogController {
+    /** ListView to display available tags for this user. */
     @FXML
     private ListView<String> tagListView;
+    /** TextField for entering a new tag name. */    
     @FXML
     private TextField tagNameField;
+    /** Checkbox to specify whether a new tag supports multiple values. */
     @FXML
     private CheckBox allowMultiValueCheckBox;
+    /** TextField for entering values for the selected tag. */
     @FXML
     private TextField tagValueField;
 
+    /** Current user using the application. */
     private User user;
+    /** Photo to which tags are being added. */
     private Photo photo;
 
+    /** List of tags available for the user. */
     private ArrayList<Tag> tagList = new ArrayList<>();;
     
-    //this list is using for storing tag strings
+    /** Observable list to display tag names in the ListView. */    
     private ObservableList<String> tags = FXCollections.observableArrayList();
-    
+
+    /**
+     * Initializes the controller after FXML components have been loaded.
+     * Binds the ListView to the observable list of tags.
+     */    
     @FXML
     public void initialize() {
         // Initialize the ListView with the current tags
         tagListView.setItems(tags);
     }
-
+    /**
+     * Sets the user and photo references, and loads the tags that can be added to the photo.
+     *
+     */
     void setUserAndPhoto(User user, Photo photo) {
         this.user = user;
         this.photo = photo;
         refreshTagList();
     }
 
+
+    /**
+     * Refreshes the tag ListView by loading tags owned by the user
+     * that are not yet used by the selected photo.
+     */
     void refreshTagList() {
         // We only show the tags that this user has but this photo doesn't have
         tags.clear();
@@ -56,6 +87,11 @@ public class AddTagDialogController {
             }
         }
     }
+    /**
+     * Handles the action to create a new tag type.
+     * Validates uniqueness and adds it to the user's tag collection.
+     *
+     */
     
     @FXML
     public void handleNewTag(ActionEvent event) {
@@ -87,7 +123,11 @@ public class AddTagDialogController {
         tagNameField.clear();
         allowMultiValueCheckBox.setSelected(false);
     }
-
+    /**
+     * Handles the action to delete a selected tag.
+     * A tag can only be deleted if it is not used by any photo.
+     *
+     */
     @FXML
     public void handleDeleteTag(ActionEvent event) {
         // Get the selected tag from the ListView
@@ -114,7 +154,11 @@ public class AddTagDialogController {
         tagList.remove(selectedIndex);
         user.getTags().remove(selectedTag.getId());
     }
-
+    /**
+     * Handles the action to assign one or more values to a selected tag,
+     * and adds the tag with its value(s) to the current photo.
+     *
+     */
     @FXML
     public void handleAddTagValue(ActionEvent event) {
         String value = tagValueField.getText().trim();
@@ -147,7 +191,8 @@ public class AddTagDialogController {
     }
     
     /**
-     * Handle the "Close" button action to close the dialog window.
+     * Handles the action to close the Add Tag dialog window.
+     *
      */
     @FXML
     public void handleClose(ActionEvent event) {

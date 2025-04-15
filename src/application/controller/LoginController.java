@@ -16,10 +16,22 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Controller for the login screen.
+ * Handles user login, including special cases for "admin" and "stock" users.
+ * Initializes the stock user with default photos if not present.
+ * Loads appropriate views (admin or main) based on the logged-in user.
+ * 
+ */
 public class LoginController {
     @FXML
     private TextField usernameField;
 
+
+    /**
+     * Initializes the login controller.
+     * If the stock user doesn't exist, creates one and loads stock photos from the "stock" directory.
+     */
     @FXML
     private void initialize() {
         // Create the stock user if not exists
@@ -50,7 +62,12 @@ public class LoginController {
         }
     }
     
-    //Handles login
+    /**
+     * Handles login button action.
+     * Verifies the entered username and loads the corresponding view (admin or user).
+     * If the user is not found and is not "admin" or "stock", shows an error.
+     *
+     */
     @FXML
     public void handleLogin(ActionEvent event) {
         String username = usernameField.getText().trim();

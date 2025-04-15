@@ -31,6 +31,15 @@ import application.model.Photo;
 import application.model.Tag;
 import application.model.User;
 
+/**
+ * Controller for the photo search dialog. Allows the user to search photos
+ * by date range or by tags, and optionally save the search result as a new album.
+ * 
+ * Features:
+ * - Search by photo date (last modified date).
+ * - Search by one or two tag-value pairs with AND/OR logic.
+ * - Save search results into a new album.
+ */
 public class SearchDialogController {
     
     @FXML
@@ -61,6 +70,9 @@ public class SearchDialogController {
     User user;
     ArrayList<Tag> tagList;
 
+    /**
+     * Initializes the dialog. Sets up UI state, listeners, and default values.
+     */
     @FXML
     public void initialize() {
         // Disable date pickers by default
@@ -141,6 +153,11 @@ public class SearchDialogController {
         });
     }
 
+    /**
+     * Sets the current user and initializes tag combo boxes.
+     * 
+     * The user performing the search.
+     */
     public void setUser(User user) {
         this.user = user;
         // Initialize tag combo boxes with tag names.
@@ -179,6 +196,9 @@ public class SearchDialogController {
         alert.showAndWait();
     }
 
+  /**
+     * Checks whether a photo contains the specified tag and tag value.
+     */
     private boolean matchTagSingleCriteria(Photo photo, Tag tag, String tagValue) {
         // Check if the photo has a tag with the specified name and one of its values matches the specified value.
         if (photo.getTags().containsKey(tag.getId())) {
@@ -192,6 +212,11 @@ public class SearchDialogController {
         return false;
     }
 
+        /**
+     * Performs the search based on selected date or tag criteria and displays the results.
+     * 
+     * @param event The ActionEvent triggered from the "Search" button.
+     */
     @FXML
 public void handleSearch(ActionEvent event) {
     resultListView.getItems().clear();

@@ -24,6 +24,16 @@ import application.model.Photo;
 import application.model.Tag;
 import application.model.User;
 
+/**
+ * Controller for the photo dialog screen that allows users to:
+ * - View photo details
+ * - Edit tags (add, remove, modify)
+ * - Navigate through photos in the album
+ * - Move or copy a photo between albums
+ * 
+ * This is a modal window launched from within an album.
+ * 
+ */
 public class PhotoDialogController {
 
     @FXML
@@ -40,6 +50,9 @@ public class PhotoDialogController {
     private Photo photo;
     private int photoIndex;
 
+    /**
+     * Initializes the image view bindings to preserve ratio and size.
+     */
     @FXML
     public void initialize() {
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
@@ -48,6 +61,10 @@ public class PhotoDialogController {
         imageView.setSmooth(true);
     }
 
+    /**
+     * Sets up the photo information to display in the dialog.
+     * 
+     */
     public void setupInfo(User user, Album album, Photo photo, int photoIndex) {
         this.user = user;
         this.album = album;
@@ -67,11 +84,17 @@ public class PhotoDialogController {
         refreshTagList();
     }
 
+    /**
+     * Refreshes the list of tags displayed for the photo.
+     */
     private void refreshTagList() {
         tagListView.getItems().clear();
         photo.getTags().forEach((tagId, tagValues) -> tagListView.getItems().add(user.getTag(tagId).getName() + ": " + String.join(", ", tagValues)));
     }
     
+        /**
+     * Opens a dialog to add a new tag to the photo.
+     */
     @FXML
     private void handleAddTag(ActionEvent event){
         try {
@@ -91,6 +114,9 @@ public class PhotoDialogController {
         }
     }
     
+        /**
+     * Deletes the selected tag from the photo.
+     */
     @FXML
     private void handleDeleteTag(ActionEvent event){
 
@@ -107,6 +133,9 @@ public class PhotoDialogController {
         refreshTagList();
     }
     
+        /**
+     * Opens a dialog to edit the value of the selected tag.
+     */
     @FXML
     private void handleEditTag(ActionEvent event){
         // Check selection
@@ -148,6 +177,9 @@ public class PhotoDialogController {
         });
     }
     
+        /**
+     * Navigates to the previous photo in the album.
+     */
     @FXML
     private void handlePrevious(ActionEvent event){
         if (photoIndex > 0) {
@@ -160,6 +192,9 @@ public class PhotoDialogController {
         }
     }
     
+        /**
+     * Navigates to the next photo in the album.
+     */
     @FXML
     private void handleNext(ActionEvent event){
         if (photoIndex < album.getPhotoIds().size() - 1) {
@@ -172,7 +207,9 @@ public class PhotoDialogController {
         }
     }
     
-    //move photo to other album
+    /**
+     * Moves the photo to another album specified by the user.
+     */
     @FXML
     private void handleMoveToAlbum(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();
@@ -215,7 +252,10 @@ public class PhotoDialogController {
         });
     }    
     
-    //copy photo to another album
+    /**
+     * Copies the photo to another album specified by the user.
+     * 
+     */
     @FXML
     private void handleCopyToAlbum(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();

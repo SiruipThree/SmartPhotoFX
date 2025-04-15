@@ -14,6 +14,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+
+/**
+ * Controller for the main user screen after login. 
+ * Handles displaying albums, creating, deleting, renaming, and opening albums.
+ * Also supports logging out and searching photos.
+ */
 public class MainController {
     @FXML
     private ListView<Album> albumListView;
@@ -23,13 +29,17 @@ public class MainController {
     
     private User user;
 
-    //Sets the current user and loads their albums into the list view
+    /**
+     * Sets the current user and populates the album list.
+     */
     public void setUser(User user){
         this.user = user;
         refreshAlbumList();
     }
     
-    //Initializes UI behavior when the scene is loaded
+    /**
+     * Initializes the controller. Binds album selection to details label.
+     */
     @FXML
     private void initialize() {
         //When an album is selected, display its details
@@ -40,13 +50,17 @@ public class MainController {
         });
     }
     
-    //Refresh the ListView with all albums from the user
+    /**
+     * Refreshes the album list from the user's data.
+     */
     private void refreshAlbumList(){
         ObservableList<Album> albums = FXCollections.observableArrayList(user.getAlbums().values());
         albumListView.setItems(albums);
     }
     
-    //Creates a new album for the user
+    /**
+     * Handles creating a new album via dialog input.
+     */
     @FXML
     public void handleCreateAlbum(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog();
@@ -72,7 +86,9 @@ public class MainController {
         });
     }
     
-    //Deletes the selected album
+    /**
+     * Handles deleting the selected album.
+     */
     @FXML
     public void handleDeleteAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();
@@ -85,7 +101,9 @@ public class MainController {
         refreshAlbumList();
     }
     
-    //Opens the selected album in a new window
+    /**
+     * Opens the selected album in a new window.
+     */
     @FXML
     public void handleOpenAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();
@@ -110,7 +128,9 @@ public class MainController {
         }
     }
     
-    //Logs the user out and returns to login screen
+    /**
+     * Logs out the current user and returns to the login screen.
+     */
     @FXML
     public void handleLogout(ActionEvent event) {
         DataStore.saveUser(user);
@@ -125,7 +145,9 @@ public class MainController {
         }
     }
 
-//Opens the photo search dialog
+    /**
+     * Opens the search dialog window to allow the user to search photos.
+     */
     @FXML
     public void handleSearch(ActionEvent event) {
         try {
@@ -145,7 +167,9 @@ public class MainController {
         }
     }
 
-    //Renames the selected album
+    /**
+     * Handles renaming the selected album via input dialog.
+     */
     @FXML
     public void handleRenameAlbum(ActionEvent event) {
         Album selected = albumListView.getSelectionModel().getSelectedItem();

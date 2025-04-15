@@ -2,6 +2,7 @@ package application.controller;
 
 import java.io.IOException;
 
+
 import application.model.DataStore;
 import application.model.User;
 import javafx.collections.FXCollections;
@@ -13,25 +14,51 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import javafx.scene.control.ListView;
+
+
+/**
+ * Controller for the Admin view.
+ *
+ * Allows the admin user to manage application users:
+ * 
+ *   View all users
+ *   Create new users
+ *   Delete existing users (excluding "admin" and "stock")
+ *   Log out of the admin interface
+ */
+
 public class AdminController {
 
     //UI Components
+    /** ListView component that displays the list of usernames. */
     @FXML private ListView<String> userListView;
+    /** TextField input for creating a new user. */
     @FXML private TextField newUserField;
 
-    //Called when using Admin
+   /**
+     * Called automatically after the FXML components are loaded.
+     * Loads and displays the user list.
+     */
     @FXML
     private void initialize(){
         loadUsers();
     }
-    
-    //Loads and displays all users for admin
+
+
+    /**
+     * Loads the list of users from the data store and updates the ListView.
+     */
     private void loadUsers(){
         ObservableList<String> users = FXCollections.observableArrayList(DataStore.getUserList());
         userListView.setItems(users);
     }
     
-    //Creates user
+    /**
+     * Handles the creation of a new user.
+     * Validates input, ensures uniqueness, and updates the UI.
+     *
+     */
     @FXML
     public void handleCreateUser(ActionEvent event) {
         String newUser = newUserField.getText().trim();
@@ -54,7 +81,11 @@ public class AdminController {
         loadUsers();
     }
     
-    //delete user
+    /**
+     * Handles the deletion of a selected user.
+     * Prevents deletion of reserved users like "admin" and "stock".
+     *
+     */
     @FXML
     public void handleDeleteUser(ActionEvent event) {
         String selected = userListView.getSelectionModel().getSelectedItem();
@@ -70,7 +101,10 @@ public class AdminController {
         loadUsers();
     }
 
-    //logout
+   /**
+     * Handles logout from the admin panel and returns to the login screen.
+     *
+     */
     @FXML
     public void handleLogout(ActionEvent event) {
         try {

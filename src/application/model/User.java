@@ -3,6 +3,18 @@ package application.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**
+ * Represents a user in the photo application.
+ * Each user can have multiple albums, photos, and tags.
+ * Manages unique ID allocation and photo import logic.
+ * 
+ * Implements Serializable to enable data persistence.
+ * 
+ * Default tag types include:
+ * - location (single value)
+ * - person (multi-value)
+ * 
+ */
  public class User implements Serializable{
     private String username;
     private long nextAlbumId;
@@ -13,7 +25,12 @@ import java.util.HashMap;
     private HashMap<Long, Photo> photoMap;
     private HashMap<String, Long> filePathToPhotoId = new HashMap<>();
     
-    public User(String username) {
+        /**
+     * Constructs a new User with the specified username.
+     * Initializes maps and adds default tag types.
+     *
+     */
+        public User(String username) {
         this.username = username;
         this.albumMap = new HashMap<>();
         this.tagMap = new HashMap<>();
@@ -22,58 +39,107 @@ import java.util.HashMap;
         this.nextTagId = 1;
         this.nextPhotoId = 1;
 
-        // Add some default tags.
+        // Add default tag types
         Tag location = new Tag(allocTagId(), "location", false);
         Tag person = new Tag(allocTagId(), "person", true);
         tagMap.put(location.getId(), location);
         tagMap.put(person.getId(), person);
     }
 
+    /**
+     * Allocates a new unique ID for an album.
+     * 
+     */
     public long allocAlbumId() {
         return nextAlbumId++;
     }
 
+    /**
+     * Allocates a new unique ID for a tag.
+     * 
+     * @return the next available tag ID
+     */
     public long allocTagId() {
         return nextTagId++;
     }
 
+    /**
+     * Allocates a new unique ID for a photo.
+     * 
+     */
     public long allocPhotoId() {
         return nextPhotoId++;
     }
-    
+
+    /**
+     * Returns the username.
+     * 
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Returns a photo given its ID.
+     * 
+     */
     public Photo getPhoto(long id) {
         return photoMap.get(id);
     }
 
+    /**
+     * Returns an album given its ID.
+     * 
+     */
     public Album getAlbum(long id) {
         return albumMap.get(id);
     }
 
+    /**
+     * Returns a tag given its ID.
+     * 
+     */
     public Tag getTag(long id) {
         return tagMap.get(id);
     }
-    
-    public HashMap<Long, Album> getAlbums(){
+
+    /**
+     * Returns all albums for the user.
+     * 
+     */
+    public HashMap<Long, Album> getAlbums() {
         return albumMap;
     }
 
-    public HashMap<Long, Tag> getTags(){
+    /**
+     * Returns all tags for the user.
+     * 
+     */
+    public HashMap<Long, Tag> getTags() {
         return tagMap;
     }
 
-    public HashMap<Long, Photo> getPhotos(){
+    /**
+     * Returns all photos for the user.
+     * 
+     */
+    public HashMap<Long, Photo> getPhotos() {
         return photoMap;
     }
 
+    /**
+     * Returns the username as a string representation.
+     * 
+     */
     @Override
-    public String toString(){
+    public String toString() {
         return username;
     }
 
+    /**
+     * Finds an album by its name (case-insensitive).
+     * 
+     */
     public Album getAlbumByName(String name) {
         for (Album album : albumMap.values()) {
             if (album.getName().equalsIgnoreCase(name)) {
@@ -83,18 +149,21 @@ import java.util.HashMap;
         return null;
     }
 
+    /**
+     * Imports a photo into the user's collection using the file path.
+     * If the photo already exists (by file path), returns the existing one.
+     *
+     */
     public Photo importPhoto(String filePath) {
         if (filePathToPhotoId.containsKey(filePath)) {
             long existingId = filePathToPhotoId.get(filePath);
             return photoMap.get(existingId);
         }
-    
+
         long newId = allocPhotoId();
         Photo newPhoto = new Photo(newId, filePath);
         photoMap.put(newId, newPhoto);
         filePathToPhotoId.put(filePath, newId);
         return newPhoto;
     }
-    
-    
 }
