@@ -128,9 +128,9 @@ Click “Search Photos” from the main screen.
 
 - Below are the commands used to update, compile, and run the code based on Sam's computer.
 
-**Copy code from resources to out** - cp -r resources out/
-**Compile java code from src to out** - javac --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -d out src/application/Photos.java src/application/controller/*.java src/application/model/*.java
-**Run the code** - java --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -cp out application.Photos
+- **Copy code from resources to out** - cp -r resources out/
+- **Compile java code from src to out** - javac --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -d out src/application/Photos.java src/application/controller/*.java src/application/model/*.java
+- **Run the code** - java --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -cp out application.Photos
 
 ---
 
