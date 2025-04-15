@@ -1,0 +1,36 @@
+Photos30: main class
+model: data object,
+    including users album, photo, tag,etc
+
+controller(abstract)->
+    LoginController, MainController, AdminController, 
+    AlbumController,
+
+util: DataManager(?)
+
+FXML: save multiple FXML files, like login, main, admin, 
+album
+
+
+Photos30/
+ ├── src/
+ │    └── main/
+ │         └── java/
+ │              └── application/
+ │                   ├── Photos.java            // 主类，入口
+ │                   ├── controller/
+ │                   │      ├── LoginController.java
+ │                   │      ├── MainController.java
+ │                   │      ├── AlbumController.java
+ │                   │      └── AdminController.java
+ │                   └── model/
+ │                          ├── User.java
+ │                          ├── Album.java
+ │                          ├── Photo.java
+ │                          ├── Tag.java
+ │                          └── DataStore.java
+ └── resources/
+         ├── login.fxml
+         ├── main.fxml
+         ├── album.fxml
+         └── admin.fxml

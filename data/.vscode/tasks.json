@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build Java",
+        "type": "shell",
+        "command": "javac -cp \"lib/*\" -d bin @sources.txt",
+        "problemMatcher": [],
+        "windows": {
+          "command": "cmd /c dir /s /b src\\*.java > sources.txt && javac -cp \"lib/*\" -d bin @sources.txt"
+        }
+      }
+    ]
+  }

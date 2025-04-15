@@ -1,0 +1,5 @@
+data/
+javafx*/
+bin/
+lib/
+*.ps1
