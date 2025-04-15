@@ -124,6 +124,13 @@ Click “Search Photos” from the main screen.
 - All UI screens are constructed using FXML.
 - Models implement `Serializable` for persistence.
 - Shared photo references ensure consistency across albums.
+-All the coding happens in folders src and resources, the java code is written in src fold and compiled to out folder and fxml code is written in resources folder and copied to out folder as well before running the code.
+
+- Below are the commands used to update, compile, and run the code based on Sam's computer.
+
+**Copy code from resources to out** - cp -r resources out/
+**Compile java code from src to out** - javac --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -d out src/application/Photos.java src/application/controller/*.java src/application/model/*.java
+**Run the code** - java --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -cp out application.Photos
 
 ---
 
