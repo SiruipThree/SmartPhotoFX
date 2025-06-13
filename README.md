@@ -1,141 +1,118 @@
-# Photos30
-Photo Assignment for CS213  
-Sarpreet Singh NetId: ss4426  
-Three Peng NetID: sp2269  
-Good luck on project
+# SmartPhotoFX
 
-This is a single-user photo management application built with JavaFX and FXML. The app allows users to organize photos into albums, tag and search them, and save their data persistently. All user-facing interaction is implemented in a graphical user interface using JavaFX.
+A JavaFX-based desktop application for managing personal photo collections with multi-user support, tagging, search, and album organization. This project was developed to demonstrate advanced proficiency in Java GUI design, object-oriented modeling, and persistent data management.
 
 ---
 
 ## 🔐 Login System
 
-When the application starts:
-
-- Login using a **username** (no password required).
+- Users log in with a **username** (no password).
 - Special usernames:
-  - `admin` → Opens the admin subsystem.
-  - `stock` → Loads preloaded stock photos.
-- Any other username creates or loads a non-admin user.
+  - `admin` → Opens the admin dashboard.
+  - `stock` → Loads preloaded sample photos.
+- Any other username creates or loads a regular user profile.
 
 ---
 
-## 🛠 Admin Subsystem
+## 🛠 Admin Dashboard
 
-Available when logged in as `admin`.
+Accessible via the `admin` account.
 
 ### Features:
-- **Create user** – Add a new user account.
-- **Delete user** – Remove a user (except `admin` or `stock`).
-- **List users** – Displays all existing usernames.
+- **Create User**
+- **Delete User**
+- **List All Users**
 
 ---
 
-## 👤 Non-Admin User Subsystem
-
-Once logged in as a regular user, the following features are available:
-
----
+## 👤 Standard User Interface
 
 ### 📂 Album Management
 
-- **Open Album** – Shows a list of your albums with:
+- View album list with:
   - Name
-  - Number of photos
-  - Earliest & latest photo dates
-- **Search** - Search for a photo.
-- **Create Album** – Add a new album.
-- **Rename Album** – Change album name.
-- **Delete Album** – Remove an existing album.
-- **Logout** - Logout to the login page.
-
----
+  - Photo count
+  - Date range
+- Create, rename, and delete albums
+- Search across albums
+- Logout option
 
 ### 🖼 Photo Management
 
-Inside any album:
-
-- **Open Photo** – Opens a detailed viewer with:
-  - Thumbnail image
-  - Caption
-  - Date (based on last file modification)
+- View photos with:
+  - Thumbnails
+  - Captions
+  - Last modified date
   - Tags
-  - Move Photo – Transfers photo to a different album.
-  - Copy Photo – Adds photo to another album without removing it.
-  - Slideshow Navigation – Use arrows to view next/previous photos.
-- **Add Photo** – Import a photo from the file system.
-  - If the photo already exists in your library, it’s reused.
-  - Caption is prompted when the photo is first added.
-- **Delete Photo** – Deletes photo from that album only.
-- **Rename Photo** – Edit the photo’s caption.
+- Add, rename, delete, copy, or move photos
+- Slideshow navigation
 
 ---
 
+### 🔖 Tagging System
 
-
-### 🔖 Tagging
-
-- **Add Tags** – Create tag types and assign values to photos.
-  - Supports both single-value and multi-value tags.
-  - Example: `location=Paris`, `person=John, Jane`
-  - Multi-value tags can be used and split with a comma
-- **Edit Tags** – Modify existing tag values.
-- **Delete Tags** – Remove a tag from a photo.
-- Tags are shared across all albums referencing the same photo.
+- Add/edit/delete custom tags
+- Supports single- and multi-value tags (e.g., `person=John, Jane`)
+- Tags persist across albums referencing the same photo
 
 ---
 
-## 🔍 Search Functionality
+## 🔍 Photo Search
 
-Click “Search Photos” from the main screen.
-
-### Options:
-- **Search by Date Range**
-  - Select a start and end date.
-- **Search by Tags**
-  - Single tag: `person=Alice`
-  - Two tags:
-    - `AND` logic: `person=Alice AND location=Paris`
-    - `OR` logic: `person=Alice OR person=Bob`
-- **Save Results**
-  - Search results can be saved as a new album (with shared photo references).
+- **By Date Range** – Select a start and end date
+- **By Tags**
+  - Single tag: `location=Paris`
+  - AND/OR logic for dual-tag queries
+- **Save Results** as a new album
 
 ---
 
-## 🖼 Stock Photos
+## 🖼 Stock Album
 
-- The app auto-generates a `stock` user on first run.
-- It loads images from the `/resources/stock/` folder into a "stock" album.
-- To access, login as `stock`.
+- Automatically generates on first run
+- Loads sample images from the `/resources/stock/` folder
 
 ---
 
 ## 💾 Data Persistence
 
-- All data (users, albums, photos, tags) is saved in the `/data/` folder.
-- Data is stored using Java serialization as `<username>.user`.
-- Data is auto-saved on logout or window close.
+- All data stored in `/data/` as serialized objects
+- Auto-saved on logout or exit
+- Supports loading previous sessions
 
 ---
 
-## ⚙️ Technical Notes
+## ⚙️ Technical Overview
 
-- Built using Java 21 and JavaFX 21.
-- All UI screens are constructed using FXML.
-- Models implement `Serializable` for persistence.
-- Shared photo references ensure consistency across albums.
--All the coding happens in folders src and resources, the java code is written in src fold and compiled to out folder and fxml code is written in resources folder and copied to out folder as well before running the code.
+- Java 21 + JavaFX 21
+- UI built with FXML
+- Follows MVC architecture
+- Java `Serializable` model classes
+- Folder Structure:
+  - `src/` – Java source code
+  - `resources/` – FXML and assets
+  - `out/` – Compiled output
 
-- Below are the commands used to update, compile, and run the code based on Sam's computer. All the commands should be run in powershell.
+### 🔧 Compilation & Run (Sample for Local Machine)
 
-- **Copy code from resources to out** - cp -r resources out/
-- **Compile java code from src to out** - javac --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -d out src/application/Photos.java src/application/controller/*.java src/application/model/*.java
-- **Run the code** - java --module-path /Users/sams/Java/javafx-sdk-21.0.6/lib --add-modules javafx.controls,javafx.fxml -cp out application.Photos
+```bash
+# Copy FXML/resources
+cp -r resources out/
 
-- We made changes and our history is in the "Three branch" the main is the final version that we are submitting to be graded.
----
+# Compile source
+javac --module-path /path/to/javafx-sdk/lib \
+      --add-modules javafx.controls,javafx.fxml \
+      -d out src/application/Photos.java \
+      src/application/controller/*.java \
+      src/application/model/*.java
 
-## 📌 Assignment Features Checklist
+# Run app
+java --module-path /path/to/javafx-sdk/lib \
+     --add-modules javafx.controls,javafx.fxml \
+     -cp out application.Photos
+
+
+## 📌 Features Checklist
 
 | Feature                                  | Implemented |
 |------------------------------------------|-------------|
